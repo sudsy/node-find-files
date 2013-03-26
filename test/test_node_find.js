@@ -82,7 +82,7 @@ describe("GetNewFiles", function () {
     function getMockedfind() {
         var oldFile = mocks.fs.file('2012-01-01', null);
         var newFile = mocks.fs.file('2018-01-01', null);
-        return mocks.loadFile(path.join(__dirname, "../", 'node_find.js'), {
+        return mocks.loadFile(path.resolve(__dirname, "../lib", 'node-find-files.js'), {
             fs: mocks.fs.create({
                 'first': {
                     'firstlevel.new': newFile,

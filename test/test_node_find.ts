@@ -9,7 +9,7 @@
 ///<reference path='../definitions/mocks.d.ts'/>
 ///<reference path='../definitions/should.d.ts'/>
 
-import node_find = module("../node_find");
+import node_find = module("../lib/node-find-files");
 import mocks = module("mocks");
 import path = module("path");
 
@@ -93,7 +93,7 @@ describe("GetNewFiles", function() {
     function getMockedfind() :node_find {
         var oldFile = mocks.fs.file('2012-01-01', null);
         var newFile = mocks.fs.file('2018-01-01', null)
-        return mocks.loadFile(path.join(__dirname, "../", 'node_find.js'),{
+        return mocks.loadFile(path.resolve(__dirname, "../lib", 'node-find-files.js'),{
             fs: mocks.fs.create({
                 'first':{
                     'firstlevel.new': newFile,
@@ -120,5 +120,3 @@ describe("GetNewFiles", function() {
 });
 
 
-//TODO: Test to make sure it returns folder paths that match expression
-//TODO: make sure it returns the expected number of files or folders after a particular date

@@ -6,8 +6,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-///<reference path='definitions/node.d.ts'/>
-///<reference path='definitions/async.d.ts'/>
+///<reference path='../definitions/node.d.ts'/>
+///<reference path='../definitions/async.d.ts'/>
 
 import fs = module("fs");
 import async = module("async");
@@ -144,4 +144,4 @@ export class finder extends EventEmitter {
         }
     }
 }
-exports = finder;
+(module).exports = finder;
