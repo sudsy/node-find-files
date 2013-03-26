@@ -1,0 +1,12 @@
+{
+  "name" : "getnewfilessince",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "async" : "0.2.6"
+  },
+  "devDependencies": {
+     "mocha"      : "1.8.1",
+     "mocks" : "0.0.1"
+  }
+}
