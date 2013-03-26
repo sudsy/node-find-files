@@ -28,7 +28,7 @@ Usage:
         console.log("Finished")
     })
     finder.on("patherror", function(err, strPath) {
-        console.log("Error for Path " + strPath + " " + err)
+        console.log("Error for Path " + strPath + " " + err)  // Note that an error in accessing a particular file does not stop the whole show
     })
     finder.on("error", function(err) {
         console.log("Global Error " + err);
