@@ -6,20 +6,31 @@
  * To change this template use File | Settings | File Templates.
  */
 ///<reference path='../definitions/mocha.d.ts'/>
-import node_find = module("../node_find");
+///<reference path='../definitions/mocks.d.ts'/>
+///<reference path='../definitions/should.d.ts'/>
 
-var strFolderName : string = "/Users/bensudbury/";
+import node_find = module("../node_find");
+import mocks = module("mocks");
+import path = module("path");
+
+var should = require("should");
+
+var strFolderName : string = "/first";
 var newFilesSinceDate : Date = new Date();
 
 
 describe("GetNewFiles", function() {
-    it("should return the new files only", function (done) {
-        this.timeout(100000);
-        var fileSearch = new node_find.finder({rootFolder : strFolderName, filesSinceDate: newFilesSinceDate});
+    it("should return all files and folders when there is no filter", function (done) {
+        var matchCounter = 0;
+//        this.timeout(100000);
+        var node_find = getMockedfind();
+        var fileSearch = new node_find.finder({rootFolder : strFolderName, filterFunction: function() { return true;}});
         fileSearch.on("match", function(strPath, stat) {
-            console.log(strPath + " - " + stat.mtime);
+            matchCounter++;
+//            console.log(strPath + " - " + stat.mtime);
         })
         fileSearch.on("complete", function() {
+            (<any>matchCounter).should.equal(14);
             done();
         })
         fileSearch.on("patherror", function(err, strPath) {
@@ -30,9 +41,84 @@ describe("GetNewFiles", function() {
         })
         fileSearch.startSearch();
     });
+
+    it("should continue after an error on one of the files", function (done) {
+        var matchCounter = 0;
+//        this.timeout(100000);
+        var node_find = getMockedfind();
+        var fileSearch = new node_find.finder({rootFolder : strFolderName, filterFunction: function(strPath, fsStat) {
+            if(strPath == "/first/second1")
+                throw new Error("Contrived Error");
+            return true;}});
+        fileSearch.on("match", function(strPath, stat) {
+            matchCounter++;
+//            console.log(strPath + " - " + stat.mtime);
+        })
+        fileSearch.on("complete", function() {
+            (<any>matchCounter).should.equal(13);
+            done();
+        })
+        fileSearch.on("patherror", function(err, strPath) {
+            console.log("Error for Path " + strPath + " " + err)
+        })
+        fileSearch.on("error", function(err) {
+            console.log("Global Error " + err);
+        })
+        fileSearch.startSearch();
+    });
+
+    it("should return only new files when passed a date", function (done) {
+        var matchCounter = 0;
+//        this.timeout(100000);
+        var node_find = getMockedfind();
+        var dateCompare = Date.parse("01 Jan 2013")
+        var fileSearch = new node_find.finder({rootFolder : strFolderName, fileModifiedDate: dateCompare});
+        fileSearch.on("match", function(strPath, stat) {
+            matchCounter++;
+//            console.log(strPath + " - " + stat.mtime);
+        })
+        fileSearch.on("complete", function() {
+            (<any>matchCounter).should.equal(4);
+            done();
+        })
+        fileSearch.on("patherror", function(err, strPath) {
+            console.log("Error for Path " + strPath + " " + err)
+        })
+        fileSearch.on("error", function(err) {
+            console.log("Global Error " + err);
+        })
+        fileSearch.startSearch();
+    });
+
+    function getMockedfind() :node_find {
+        var oldFile = mocks.fs.file('2012-01-01', null);
+        var newFile = mocks.fs.file('2018-01-01', null)
+        return mocks.loadFile(path.join(__dirname, "../", 'node_find.js'),{
+            fs: mocks.fs.create({
+                'first':{
+                    'firstlevel.new': newFile,
+                    'firstlevel.old': oldFile,
+                    'second1' : {
+                        'secondlevel.old' : oldFile,
+                        'secondlevel2.old' : oldFile,
+                        'third1' : {
+                            'thirdlevel.new' : newFile,
+                            'thirdlevel.old' : oldFile
+                        }
+                    },'second2' : {
+                        'secondlevel.old' : oldFile,
+                        'secondlevel.new' : newFile,
+                        'third2' : {
+                            'thirdlevel.new' : newFile,
+                            'thirdlevel.old' : oldFile
+                        }
+                    }
+                }
+            })}
+        );
+    }
 });
 
-//TODO: Test to make sure it can move on from a path error
-//TODO: Test to make sure it returns all files with no filter function
+
 //TODO: Test to make sure it returns folder paths that match expression
 //TODO: make sure it returns the expected number of files or folders after a particular date

@@ -14,9 +14,9 @@ var finder = (function (_super) {
     function finder(options) {
         _super.call(this);
         this.options = options;
-        if(options.filesSinceDate) {
+        if(options.fileModifiedDate) {
             options.filterFunction = function (strPath, fsStat) {
-                return (fsStat.mtime > options.filesSinceDate) ? true : false;
+                return (fsStat.mtime > options.fileModifiedDate) ? true : false;
             };
         }
     }

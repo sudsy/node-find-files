@@ -30,9 +30,9 @@ export class finder extends EventEmitter {
     constructor(options: {rootFolder: string; filterFunction : (strPath : string, fsStat : fs.Stats) => void;});
     constructor(public options: any) {
         super();
-        if(options.filesSinceDate)
+        if(options.fileModifiedDate)
             options.filterFunction = function (strPath, fsStat) {
-                return (fsStat.mtime > options.filesSinceDate) ? true : false;
+                return (fsStat.mtime > options.fileModifiedDate) ? true : false;
             }
 
     }
@@ -54,8 +54,6 @@ export class finder extends EventEmitter {
 
     recurseFolder(strFolderName: string, folderCompleteCallback: (err: Error) => void){
         var that = this;
-
-
 
 
         fs.readdir(strFolderName, function(err, files) {
@@ -133,6 +131,7 @@ export class finder extends EventEmitter {
         }
 
         function checkMatch(strPath, stat) {
+
             try {
                 if (that.options.filterFunction(strPath, stat)) {
                     that.emit("match", strPath, stat);
