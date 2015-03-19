@@ -10,13 +10,13 @@ My initial use case was to find files modified since a particular date, but you 
 
 Usage:
 
-    var node_find_files = require("node-find-files");
+    var FindFiles = require("node-find-files");
 
 
     var d = new Date()
     d.setDate(d.getDate() - 1);
 
-    var finder = new node_find_files({
+    var finder = new FindFiles({
         rootFolder : "/Users",
         fileModifiedDate : d
     });
@@ -40,7 +40,7 @@ Usage:
 You can set up the finder object with any filter function you like
 
     //  Alternate Usage to achieve the same goal, but you can use any of the properties of the fs.stat object or the path to do your filtering
-    var finder = new node_find_files({
+    var finder = new FindFiles({
         rootFolder : "/Users",
         filterFunction : function (path, stat) {
             return (stat.mtime > d) ? true : false;
