@@ -1,6 +1,6 @@
 {
   "name": "file-scanner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Node Module for finding files by attributes. Originally developed to find files modified since a particular date.",
   "homepage": "",
   "keywords": [
@@ -24,7 +24,7 @@
   "main": "./index.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/sudsy/node-find-files.git"
+    "url": "git://github.com/rubenhak/node-find-files.git"
   },
   "readmeFilename": "README.md",
   "directories": {
