@@ -1,6 +1,6 @@
 {
   "name": "file-scanner",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Node Module for finding files by attributes. Originally developed to find files modified since a particular date.",
   "homepage": "",
   "keywords": [
