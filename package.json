@@ -1,6 +1,6 @@
 {
-  "name": "node-find-files",
-  "version": "0.0.4",
+  "name": "file-scanner",
+  "version": "0.0.1",
   "description": "A Node Module for finding files by attributes. Originally developed to find files modified since a particular date.",
   "homepage": "",
   "keywords": [
@@ -12,7 +12,7 @@
     "nodejs",
     "js"
   ],
-  "author": "Ben Sudbury <bsudbury@gmail.com>",
+  "author": "Ruben Hakopian <ruben.hakopian@gmail.com>",
   "dependencies": {
     "async": "0.2.6"
   },
@@ -21,13 +21,12 @@
     "mocks": "0.0.1",
     "should": "1.2.2"
   },
-  "main": "./lib/node-find-files",
+  "main": "./index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/sudsy/node-find-files.git"
   },
   "readmeFilename": "README.md",
-  "gitHead": "c8d96f00566700f2cc3a2b1b9d2bfce09a4e9e55",
   "directories": {
     "example": "examples",
     "test": "test"
