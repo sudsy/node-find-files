@@ -21,7 +21,7 @@ class finder extends EventEmitter {
         this.options = options;
         if (options.fileModifiedDate)
             options.filterFunction = (strPath, fsStat) => {
-                return (fsStat.mtime > options.fileModifiedDate) ? true : false;
+                return (fsStat.mtime > options.fileModifiedDate);
             };
     }
     startSearch() {

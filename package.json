@@ -26,7 +26,8 @@
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   },
-  "main": "./lib/node-find-files",
+  "main": "./dist/node-find-files.js",
+  "types": "./dist/node-find-files.d.ts",
   "repository": {
     "type": "git",
     "url": "git://github.com/sudsy/node-find-files.git"
