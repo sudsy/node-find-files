@@ -19,6 +19,6 @@ export declare class finder extends EventEmitter {
         filterFunction: (strPath: string, fsStat: fs.Stats) => void;
     });
     startSearch(): void;
-    recurseFolder(strFolderName: string, folderCompleteCallback: (err: Error) => void): void;
+    private recurseFolder;
 }
 export default finder;

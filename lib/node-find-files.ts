@@ -24,7 +24,7 @@ export class finder extends EventEmitter {
         super();
         if(options.fileModifiedDate)
             options.filterFunction = (strPath, fsStat) => {
-                return (fsStat.mtime > options.fileModifiedDate) ? true : false;
+                return (fsStat.mtime > options.fileModifiedDate);
             }
 
     }
@@ -44,7 +44,7 @@ export class finder extends EventEmitter {
 
     }
 
-    recurseFolder(strFolderName: string, folderCompleteCallback: (err: Error) => void){
+    private recurseFolder(strFolderName: string, folderCompleteCallback: (err: Error) => void){
         
 
 

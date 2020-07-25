@@ -26,8 +26,6 @@ var strFolderName : string = "/first";
         setupFilesystemMocks();
     
         
-        
-        
         var fileSearch = new finder({rootFolder : strFolderName, filterFunction: function() { return true;}});
         
         fileSearch.on("match", function(strPath, stat) {
@@ -53,53 +51,60 @@ var strFolderName : string = "/first";
         fileSearch.startSearch();
     });
 
-//     it("should continue after an error on one of the files", function (done) {
-//         var matchCounter = 0;
-// //        this.timeout(100000);
-//         // var node_find = getMockedfind();
-//         var fileSearch = new finder({rootFolder : strFolderName, filterFunction: function(strPath, fsStat) {
-//             if(strPath == "/first/second1")
-//                 throw new Error("Contrived Error");
-//             return true;}});
-//         fileSearch.on("match", function(strPath, stat) {
-//             matchCounter++;
-// //            console.log(strPath + " - " + stat.mtime);
-//         })
-//         fileSearch.on("complete", function() {
-//             (<any>matchCounter).should.equal(13);
-//             done();
-//         })
-//         fileSearch.on("patherror", function(err, strPath) {
-//             console.log("Error for Path " + strPath + " " + err)
-//         })
-//         fileSearch.on("error", function(err) {
-//             console.log("Global Error " + err);
-//         })
-//         fileSearch.startSearch();
-//     });
+    test("should continue after an error on one of the files", done => {
+        var matchCounter = 0;
 
-//     it("should return only new files when passed a date", function (done) {
-//         var matchCounter = 0;
-// //        this.timeout(100000);
-//         // var node_find = getMockedfind();
-//         var dateCompare = new Date("01 Jan 2013")
-//         var fileSearch = new finder({rootFolder : strFolderName, fileModifiedDate: dateCompare});
-//         fileSearch.on("match", function(strPath, stat) {
-//             matchCounter++;
-// //            console.log(strPath + " - " + stat.mtime);
-//         })
-//         fileSearch.on("complete", function() {
-//             (<any>matchCounter).should.equal(4);
-//             done();
-//         })
-//         fileSearch.on("patherror", function(err, strPath) {
-//             console.log("Error for Path " + strPath + " " + err)
-//         })
-//         fileSearch.on("error", function(err) {
-//             console.log("Global Error " + err);
-//         })
-//         fileSearch.startSearch();
-//     });
+        setupFilesystemMocks();
+        var fileSearch = new finder({rootFolder : strFolderName, filterFunction: function(strPath, fsStat) {
+            if(strPath == "/first/second1")
+                throw new Error("Contrived Error");
+            return true;}});
+        fileSearch.on("match", function(strPath, stat) {
+            matchCounter++;
+//            console.log(strPath + " - " + stat.mtime);
+        })
+        fileSearch.on("complete", function() {
+            mock.restore();
+            expect(matchCounter).toBe(13);
+            done();
+        })
+        fileSearch.on("patherror", function(err, strPath) {
+            // console.log("Error for Path " + strPath + " " + err)
+        })
+        fileSearch.on("error", function(err) {
+            mock.restore();
+            console.log("Global Error " + err);
+            done(err);
+        })
+        fileSearch.startSearch();
+    });
+
+    test("should return only new files when passed a date", done => {
+        var matchCounter = 0;
+//        this.timeout(100000);
+        // var node_find = getMockedfind();
+        setupFilesystemMocks();
+        var dateCompare = new Date("01 Jan 2013")
+        var fileSearch = new finder({rootFolder : strFolderName, fileModifiedDate: dateCompare});
+        fileSearch.on("match", function(strPath, stat) {
+            matchCounter++;
+//            console.log(strPath + " - " + stat.mtime);
+        })
+        fileSearch.on("complete", function() {
+            mock.restore();
+            expect(matchCounter).toBe(8);
+            done();
+        })
+        fileSearch.on("patherror", function(err, strPath) {
+            //console.log("Error for Path " + strPath + " " + err)
+        })
+        fileSearch.on("error", function(err) {
+            mock.restore();
+            console.log("Global Error " + err);
+            done(err);
+        })
+        fileSearch.startSearch();
+    });
 
     
 // });
