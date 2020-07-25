@@ -26,7 +26,7 @@ var strFolderName : string = "/first";
         setupFilesystemMocks();
     
         
-        var fileSearch = new finder({rootFolder : strFolderName, filterFunction: function() { return true;}});
+        var fileSearch = new finder({rootFolder : strFolderName});
         
         fileSearch.on("match", function(strPath, stat) {
             matchCounter++;

@@ -20,12 +20,18 @@ export class finder extends EventEmitter {
 
     constructor(options: {rootFolder: string; fileModifiedDate : Date;});
     constructor(options: {rootFolder: string; filterFunction : (strPath : string, fsStat : fs.Stats) => void;});
+    constructor(options: {rootFolder: string;});
     constructor(public options: any) {
         super();
-        if(options.fileModifiedDate)
+        if(options.fileModifiedDate){
             options.filterFunction = (strPath, fsStat) => {
                 return (fsStat.mtime > options.fileModifiedDate);
             }
+        }
+
+        if(!options.filterFunction){
+            options.filterFunction = () => true;
+        }
 
     }
 
