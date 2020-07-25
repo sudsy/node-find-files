@@ -23,7 +23,7 @@ export class finder extends EventEmitter {
     constructor(public options: any) {
         super();
         if(options.fileModifiedDate)
-            options.filterFunction = function (strPath, fsStat) {
+            options.filterFunction = (strPath, fsStat) => {
                 return (fsStat.mtime > options.fileModifiedDate) ? true : false;
             }
 
@@ -59,7 +59,7 @@ export class finder extends EventEmitter {
             }
 
             async.each(files,
-                function (file: string, callback: Function){
+                (file: string, callback: Function) =>{
                     try{
                         var strPath : string = path.join(strFolderName, file);
 
@@ -69,7 +69,7 @@ export class finder extends EventEmitter {
                         pathError(e, strPath);
                         return callback(null); // Don't return error to callback or we will miss other files in directory
                     }
-                    fs.lstat(strPath, function(err, stat) {
+                    fs.lstat(strPath, (err, stat) => {
                         if(err){
                             pathError(err, strPath);
                             return callback(null); // Don't return error to callback or we will miss other files in directory
@@ -80,7 +80,7 @@ export class finder extends EventEmitter {
                         }
                         if(stat.isDirectory()){
                             checkMatch(strPath, stat);
-                            this.recurseFolder(strPath, function(err){
+                            this.recurseFolder(strPath, (err) => {
                                 if(err){
                                     pathError(err, strPath);
                                 }
@@ -97,7 +97,7 @@ export class finder extends EventEmitter {
 
                     })
                 },
-                function onComplete(err){
+                (err) => {
                     if(err){
                         pathError(err, strFolderName);
                     }
@@ -122,7 +122,7 @@ export class finder extends EventEmitter {
 
         }
 
-        function checkMatch(strPath, stat) {
+        var checkMatch = (strPath, stat) => {
 
             try {
                 if (this.options.filterFunction(strPath, stat)) {

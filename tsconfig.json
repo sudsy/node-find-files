@@ -8,7 +8,7 @@
       "outDir": "dist"
     },
     "exclude": [
-        "./test/",
+        "__tests__",
         "./node_modules/",
         "./dist/"
       ],

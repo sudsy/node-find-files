@@ -5,50 +5,52 @@
  * Time: 9:43 AM
  * To change this template use File | Settings | File Templates.
  */
-import mockfs from "mock-fs";
-// setupFilesystemMocks();
-import fs from "fs";
-// import {finder} from "../lib/node-find-files";
+import mock from 'mock-fs'
+import {finder} from "../lib/node-find-files";
 // import mocks from "mocks";
 // import path from "path";
 
+// setupFilesystemMocks();
 
-
-import should from "should";
+// import should from "should";
 
 var strFolderName : string = "/first";
-var newFilesSinceDate : Date = new Date();
+// var newFilesSinceDate : Date = new Date();
 
 
 
-describe("GetNewFiles", function() {
-    it("should return all files and folders when there is no filter", function (done) {
+
+    test("should return all files and folders when there is no filter", done => {
+        
         var matchCounter = 0;
-        mockfs({
-            'path/to/file.txt': 'file content here'
-          }, null);
-        fs.readdir("/", (err, files) => {
-            var here = files;
+        setupFilesystemMocks();
+    
+        
+        
+        
+        var fileSearch = new finder({rootFolder : strFolderName, filterFunction: function() { return true;}});
+        
+        fileSearch.on("match", function(strPath, stat) {
+            matchCounter++;
+//            console.log(strPath + " - " + stat.mtime);
         })
-    //    this.timeout(100000);
-        
-//         var fileSearch = new finder({rootFolder : strFolderName, filterFunction: function() { return true;}});
-        
-//         fileSearch.on("match", function(strPath, stat) {
-//             matchCounter++;
-// //            console.log(strPath + " - " + stat.mtime);
-//         })
-//         fileSearch.on("complete", function() {
-//             (<any>matchCounter).should.equal(14);
-//             done();
-//         })
-//         fileSearch.on("patherror", function(err, strPath) {
-//             console.log("Error for Path " + strPath + " " + err)
-//         })
-//         fileSearch.on("error", function(err) {
-//             console.log("Global Error " + err);
-//         })
-//         fileSearch.startSearch();
+        fileSearch.on("complete", function() {
+            expect(matchCounter).toBe(14);
+            mock.restore();
+            done();
+        })
+        fileSearch.on("patherror", function(err, strPath) {
+            mock.restore();
+            console.log("Error for Path " + strPath + " " + err);
+            done(err);
+
+        })
+        fileSearch.on("error", function(err) {
+            mock.restore();
+            console.log("Global Error " + err);
+            done(err);
+        })
+        fileSearch.startSearch();
     });
 
 //     it("should continue after an error on one of the files", function (done) {
@@ -100,21 +102,21 @@ describe("GetNewFiles", function() {
 //     });
 
     
-});
+// });
 
 
 function setupFilesystemMocks() {
-    var oldFile = mockfs.file({
+    var oldFile = mock.file({
         content: 'old file',
         mtime: new Date('2012-01-01')
       });
-    var newFile = mockfs.file({
+    var newFile = mock.file({
         content: 'new file',
         mtime: new Date('2018-01-01')
       });
     
-    mockfs({
-        'first':{
+    mock({
+        '/first':{
             'firstlevel.new': newFile,
             'firstlevel.old': oldFile,
             'second1' : {
