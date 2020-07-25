@@ -9,8 +9,8 @@
     },
     "exclude": [
         "__tests__",
-        "./node_modules/",
-        "./dist/"
+        "node_modules/",
+        "dist/"
       ],
     "lib": ["es2015"]
   }

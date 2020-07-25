@@ -20,7 +20,7 @@ class finder extends EventEmitter {
         super();
         this.options = options;
         if (options.fileModifiedDate)
-            options.filterFunction = function (strPath, fsStat) {
+            options.filterFunction = (strPath, fsStat) => {
                 return (fsStat.mtime > options.fileModifiedDate) ? true : false;
             };
     }
@@ -43,7 +43,7 @@ class finder extends EventEmitter {
             if (!files) {
                 return folderCompleteCallback(null); // This is just an empty folder
             }
-            async_1.default.each(files, function (file, callback) {
+            async_1.default.each(files, (file, callback) => {
                 try {
                     var strPath = path_1.default.join(strFolderName, file);
                 }
@@ -51,7 +51,7 @@ class finder extends EventEmitter {
                     pathError(e, strPath);
                     return callback(null); // Don't return error to callback or we will miss other files in directory
                 }
-                fs_1.default.lstat(strPath, function (err, stat) {
+                fs_1.default.lstat(strPath, (err, stat) => {
                     if (err) {
                         pathError(err, strPath);
                         return callback(null); // Don't return error to callback or we will miss other files in directory
@@ -62,7 +62,7 @@ class finder extends EventEmitter {
                     }
                     if (stat.isDirectory()) {
                         checkMatch(strPath, stat);
-                        this.recurseFolder(strPath, function (err) {
+                        this.recurseFolder(strPath, (err) => {
                             if (err) {
                                 pathError(err, strPath);
                             }
@@ -74,7 +74,7 @@ class finder extends EventEmitter {
                         return callback(null);
                     }
                 });
-            }, function onComplete(err) {
+            }, (err) => {
                 if (err) {
                     pathError(err, strFolderName);
                 }
@@ -92,7 +92,7 @@ class finder extends EventEmitter {
                 this.emit("error", new Error("Error in path Error Handler" + e));
             }
         };
-        function checkMatch(strPath, stat) {
+        var checkMatch = (strPath, stat) => {
             try {
                 if (this.options.filterFunction(strPath, stat)) {
                     this.emit("match", strPath, stat);
@@ -101,7 +101,7 @@ class finder extends EventEmitter {
             catch (e) {
                 pathError(e, strPath);
             }
-        }
+        };
     }
 }
 exports.finder = finder;
