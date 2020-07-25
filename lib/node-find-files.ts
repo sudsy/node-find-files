@@ -1,19 +1,11 @@
-/**
- * Created with JetBrains WebStorm.
- * User: bensudbury
- * Date: 25/03/13
- * Time: 9:23 AM
- * To change this template use File | Settings | File Templates.
- */
 
-///<reference path='../definitions/node.d.ts'/>
-///<reference path='../definitions/async.d.ts'/>
 
-import fs = module("fs");
-import async = module("async");
-import path = module("path");
-import util = module("util");
-import events = module("events");
+
+import fs from "fs";
+import async from "async";
+import path from "path";
+import util from "util";
+import events from "events";
 
 var EventEmitter = events.EventEmitter;
 
@@ -38,25 +30,25 @@ export class finder extends EventEmitter {
     }
 
     startSearch() {
-        var that = this;
-        this.recurseFolder(that.options.rootFolder, function(err) {
+        
+        this.recurseFolder(this.options.rootFolder, (err) => {
             if(err){
-                that.emit("error", err);
+                this.emit("error", err);
                 return;
             }
 
             //console.log("This Should Call when everything is finished");
 
-            that.emit("complete");
+            this.emit("complete");
         });
 
     }
 
     recurseFolder(strFolderName: string, folderCompleteCallback: (err: Error) => void){
-        var that = this;
+        
 
 
-        fs.readdir(strFolderName, function(err, files) {
+        fs.readdir(strFolderName, (err, files) => {
             if(err){
                 pathError(err, strFolderName);
                 return folderCompleteCallback(err);
@@ -67,7 +59,7 @@ export class finder extends EventEmitter {
             }
 
             async.each(files,
-                function (file: String, callback: Function){
+                function (file: string, callback: Function){
                     try{
                         var strPath : string = path.join(strFolderName, file);
 
@@ -88,7 +80,7 @@ export class finder extends EventEmitter {
                         }
                         if(stat.isDirectory()){
                             checkMatch(strPath, stat);
-                            that.recurseFolder(strPath, function(err){
+                            this.recurseFolder(strPath, function(err){
                                 if(err){
                                     pathError(err, strPath);
                                 }
@@ -119,13 +111,13 @@ export class finder extends EventEmitter {
 
         })
 
-        function pathError(err, strPath) {
+        var pathError = (err, strPath) => {
             try{
-                that.emit("patherror", err, strPath);
+                this.emit("patherror", err, strPath);
             }catch(e)
             {
                 //Already emitted a path error and the handler failed must not throw error or other files will fail to process too
-                that.emit("error", new Error("Error in path Error Handler" + e));
+                this.emit("error", new Error("Error in path Error Handler" + e));
             }
 
         }
@@ -133,8 +125,8 @@ export class finder extends EventEmitter {
         function checkMatch(strPath, stat) {
 
             try {
-                if (that.options.filterFunction(strPath, stat)) {
-                    that.emit("match", strPath, stat);
+                if (this.options.filterFunction(strPath, stat)) {
+                    this.emit("match", strPath, stat);
                 }
 
             }
@@ -144,4 +136,4 @@ export class finder extends EventEmitter {
         }
     }
 }
-(module).exports = finder;
+export default finder;
