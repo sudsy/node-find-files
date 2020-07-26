@@ -1,6 +1,6 @@
 {
   "name": "node-find-files",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "description": "A Node Module for finding files by attributes. Originally developed to find files modified since a particular date.",
   "homepage": "",
   "keywords": [
@@ -28,6 +28,9 @@
   },
   "main": "./dist/node-find-files.js",
   "types": "./dist/node-find-files.d.ts",
+  "files": [
+    "/dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/sudsy/node-find-files.git"

@@ -1,8 +1,8 @@
-#node-find-files
+# node-find-files
 
 This is a quick utility I wrote for recursively searching a directory structure and finding files and directories that match a particular spec.
 
-##What's Different About it
+## What's Different About it
 
 Similar projects that I was able to find processed the whole directory tree and then handed a set of results back at the end. This module inherits from EventEmitter so it will begin streaming results as soon as the first one is found.
 
@@ -10,7 +10,7 @@ My initial use case was to find files modified since a particular date, but you 
 
 Usage:
 
-    var FindFiles = require("node-find-files");
+    var FindFiles = require("node-find-files").default;
 
 
     var d = new Date()
@@ -35,7 +35,7 @@ Usage:
     })
     finder.startSearch();
 
-##OK but give me more Power
+## OK but give me more Power
 
 You can set up the finder object with any filter function you like
 
@@ -46,3 +46,18 @@ You can set up the finder object with any filter function you like
             return (stat.mtime > d) ? true : false;
         }
     });
+
+## What's new in version 1.0.0?
+
+Main breaking change is that there was previously an export called finder that could be imported as 
+
+`import {finder} from "node-find-files";`.
+
+This has been removed now due to an update in tooling so some examples of importing it properly are: 
+
+`import finder from "node-find-files";` or;
+
+`const finder = require("node-find-files");`
+
+Otherwise it is mainly a bug fix release with a few minor refactorings to support the new tooling.
+    

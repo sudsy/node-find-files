@@ -4,7 +4,6 @@
 import fs from "fs";
 import async from "async";
 import path from "path";
-import util from "util";
 import events from "events";
 
 var EventEmitter = events.EventEmitter;
@@ -20,7 +19,7 @@ type FinderOptions = {
  * this class emits a number of events
  * on "match" is emitted for every path that matches
  */
-export class finder extends EventEmitter {
+class finder extends EventEmitter {
 
     options: Partial<FinderOptions>;
 
@@ -79,33 +78,7 @@ export class finder extends EventEmitter {
                         return callback(null); // Don't return error to callback or we will miss other files in directory
                     }
                     
-                    fs.lstat(strPath, (err, stat) => {
-                        if(err){
-                            this.onPathError(err, strPath);
-                            return callback(null); // Don't return error to callback or we will miss other files in directory
-                        }
-                        if(!stat){
-                            this.onPathError(new Error("Could not get stat for file " + strPath), strPath);
-                            return callback(null); // Don't return error to callback or we will miss other files in directory
-                        }
-                        if(stat.isDirectory()){
-                            this.checkMatch(strPath, stat);
-                            this.recurseFolder(strPath, (err) => {
-                                if(err){
-                                    this.onPathError(err, strPath);
-                                }
-                                return callback(null);
-                            });
-                        }else
-                        {
-                            this.checkMatch(strPath, stat);
-
-                            return callback(null);
-
-
-                        }
-
-                    })
+                    this.onFileFound(strPath, callback);
                 },
                 (err) => {
                     if(err){
@@ -122,8 +95,36 @@ export class finder extends EventEmitter {
         })
 
         
+    }
 
-        
+    private onFileFound(strPath: string, callback: Function) {
+        fs.lstat(strPath, (err, stat) => {
+            if (err) {
+                this.onPathError(err, strPath);
+                return callback(null); // Don't return error to callback or we will miss other files in directory
+            }
+            if (!stat) {
+                this.onPathError(new Error("Could not get stat for file " + strPath), strPath);
+                return callback(null); // Don't return error to callback or we will miss other files in directory
+            }
+            if (stat.isDirectory()) {
+                this.checkMatch(strPath, stat);
+                this.recurseFolder(strPath, (err) => {
+                    if (err) {
+                        this.onPathError(err, strPath);
+                    }
+                    return callback(null);
+                });
+            }
+            else {
+                this.checkMatch(strPath, stat);
+
+                return callback(null);
+
+
+            }
+
+        });
     }
 
     private checkMatch(strPath, stat){
@@ -150,4 +151,5 @@ export class finder extends EventEmitter {
 
     }
 }
-export default finder;
+export = finder;
+

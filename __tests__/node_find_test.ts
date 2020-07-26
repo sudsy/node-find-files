@@ -1,6 +1,6 @@
 
 import mock from 'mock-fs'
-import { finder } from "../lib/node-find-files";
+import finder from "../lib/node-find-files";
 
 
 var strFolderName: string = "/first";

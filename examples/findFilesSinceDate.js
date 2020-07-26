@@ -6,13 +6,13 @@
  * To change this template use File | Settings | File Templates.
  */
 
-    var FindFiles = require("node-find-files");
+    var finder = require("../dist/node-find-files.js");
 
-
+    console.log(finder);
     var d = new Date()
     d.setDate(d.getDate() - 1);
 
-    var finder = new FindFiles({
+    var finder = new finder({
         rootFolder : "/Users",
         fileModifiedDate : d
     });
