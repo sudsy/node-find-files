@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -24,70 +33,92 @@ class finder extends EventEmitter {
         if (!options.filterFunction) {
             options.filterFunction = () => true;
         }
+        // if(!options.concurrencyLimit){
+        //     options.concurrencyLimit = os.cpus().length;
+        // }
         this.options = options;
     }
     startSearch() {
-        this.recurseFolder(this.options.rootFolder, (err) => {
-            if (err) {
-                this.emit("error", err);
-                return;
-            }
-            //console.log("This Should Call when everything is finished");
-            this.emit("complete");
-        });
+        this.recurseFolder(this.options.rootFolder);
     }
-    recurseFolder(strFolderName, folderCompleteCallback) {
+    recurseFolder(strFolderName) {
         fs_1.default.readdir(strFolderName, (err, files) => {
             if (err) {
                 this.onPathError(err, strFolderName);
-                return folderCompleteCallback(err);
             }
             if (!files) {
-                return folderCompleteCallback(null); // This is just an empty folder
+                return;
             }
-            async_1.default.each(files, (file, callback) => {
+            if (!this.queue) {
+                this.queue = async_1.default.queue((strPath, callback) => {
+                    this.onFileFound(strPath, callback);
+                }, 1);
+                this.queue.drain = () => __awaiter(this, void 0, void 0, function* () {
+                    this.emit("complete");
+                });
+            }
+            files.forEach(file => {
                 try {
                     var strPath = path_1.default.join(strFolderName, file);
+                    this.queue.push(strPath, (err, result) => {
+                        if (err) {
+                            this.onPathError(err, strPath);
+                        }
+                    });
                 }
                 catch (e) {
                     this.onPathError(e, strPath);
-                    return callback(null); // Don't return error to callback or we will miss other files in directory
+                    // Don't throw error to callback or we will miss other files in directory
                 }
-                this.onFileFound(strPath, callback);
-            }, (err) => {
-                if (err) {
-                    this.onPathError(err, strFolderName);
-                }
-                //                    if(strFolderName.length < 20)
-                //                        console.log("finished " + strFolderName);
-                return folderCompleteCallback(err);
             });
+            //             async.each(files,
+            //                 (file: string, callback: Function) =>{
+            //                     try{
+            //                         var strPath : string = path.join(strFolderName, file);
+            //                     }
+            //                     catch(e)
+            //                     {
+            //                         this.onPathError(e, strPath);
+            //                         return callback(null); // Don't return error to callback or we will miss other files in directory
+            //                     }
+            //                     this.onFileFound(strPath, callback);
+            //                 },
+            //                 (err) => {
+            //                     if(err){
+            //                         this.onPathError(err, strFolderName);
+            //                     }
+            // //                    if(strFolderName.length < 20)
+            // //                        console.log("finished " + strFolderName);
+            //                     return folderCompleteCallback(err);
+            //                 }
+            //             )
         });
     }
     onFileFound(strPath, callback) {
-        fs_1.default.lstat(strPath, (err, stat) => {
-            if (err) {
-                this.onPathError(err, strPath);
-                return callback(null); // Don't return error to callback or we will miss other files in directory
-            }
-            if (!stat) {
-                this.onPathError(new Error("Could not get stat for file " + strPath), strPath);
-                return callback(null); // Don't return error to callback or we will miss other files in directory
-            }
-            if (stat.isDirectory()) {
-                this.checkMatch(strPath, stat);
-                this.recurseFolder(strPath, (err) => {
-                    if (err) {
-                        this.onPathError(err, strPath);
-                    }
+        try {
+            fs_1.default.lstat(strPath, (err, stat) => {
+                if (err) {
+                    this.onPathError(err, strPath);
+                    return callback(null); // Don't return error to callback or we will miss other files in directory
+                }
+                if (!stat) {
+                    this.onPathError(new Error("Could not get stat for file " + strPath), strPath);
+                    return callback(null); // Don't return error to callback or we will miss other files in directory
+                }
+                if (stat.isDirectory()) {
+                    this.checkMatch(strPath, stat);
+                    this.recurseFolder(strPath);
                     return callback(null);
-                });
-            }
-            else {
-                this.checkMatch(strPath, stat);
-                return callback(null);
-            }
-        });
+                }
+                else {
+                    this.checkMatch(strPath, stat);
+                    return callback(null);
+                }
+            });
+        }
+        catch (err) {
+            callback(err);
+        }
     }
     checkMatch(strPath, stat) {
         try {

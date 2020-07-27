@@ -1,10 +1,12 @@
 /// <reference types="node" />
 import fs from "fs";
+import async from "async";
 import events from "events";
 declare var EventEmitter: typeof events.EventEmitter;
 declare type FinderOptions = {
     rootFolder?: string;
     fileModifiedDate?: Date;
+    concurrencyLimit?: number;
     filterFunction: (strPath: string, fsStat: fs.Stats) => boolean;
 };
 /***
@@ -15,6 +17,7 @@ declare type FinderOptions = {
  */
 declare class finder extends EventEmitter {
     options: Partial<FinderOptions>;
+    queue: async.AsyncQueue<string>;
     constructor(options: Partial<FinderOptions>);
     startSearch(): void;
     private recurseFolder;

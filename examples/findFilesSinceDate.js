@@ -5,7 +5,8 @@
  * Time: 2:18 PM
  * To change this template use File | Settings | File Templates.
  */
-
+    var start = new Date()
+    
     var finder = require("../dist/node-find-files.js");
 
     console.log(finder);
@@ -31,7 +32,9 @@
         console.log(strPath + " - " + stat.mtime);
     })
     finder.on("complete", function() {
-        console.log("Finished")
+        console.log("Finished");
+        var end = new Date() - start
+        console.info('Execution time: %dms', end);
     })
     finder.on("patherror", function(err, strPath) {
         console.log("Error for Path " + strPath + " " + err)
