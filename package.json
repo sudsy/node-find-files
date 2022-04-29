@@ -14,7 +14,7 @@
   ],
   "author": "Ben Sudbury <bsudbury@gmail.com>",
   "dependencies": {
-    "async": "0.2.6"
+    "async": "2.6.4"
   },
   "devDependencies": {
     "@types/async": "^3.2.3",
